@@ -1,5 +1,3 @@
-import 'dart:core';
-
 class Times {
   String status;
   String copyright;

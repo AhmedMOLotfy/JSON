@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 Future<List<Results>> fetchAlbum() async {
   final response = await http.get(
       'https://api.nytimes.com/svc/topstories/v2/business.json?api-key=kmFzeLy3fuGwS7FYuDCgvMpplpJ6GAkJ');
-
   if (response.statusCode == 200) {
     List<Results> list;
     var parsed = jsonDecode(response.body);
