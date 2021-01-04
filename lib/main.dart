@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:json/MyModel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 Future<List<Results>> fetchAlbum() async {
-  final response =
-      await http.get('https://api.nytimes.com/svc/topstories/v2/busin'
-          'ess.json?api-key=kmFzeLy3fuGwS7FYuDCgvMpplpJ6GAkJ');
+  final response = await http.get(
+      'https://api.nytimes.com/svc/topstories/v2/business.json?api-key=kmFzeLy3fuGwS7FYuDCgvMpplpJ6GAkJ');
 
   if (response.statusCode == 200) {
     List<Results> list;
@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Fetch Data Example',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
       home: Scaffold(
         appBar: AppBar(
@@ -59,31 +59,9 @@ class _MyAppState extends State<MyApp> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ListView(
-                  children: snapshot.data.map((e) => Text(e.url)).toList(),
+                  children: snapshot.data.map((e) => _buildItem(e)).toList(),
                 );
-              }
-              //   return Center(
-              //     child: ListView(
-              //       children: [
-              //         Text("STATUS : ${snapshot.data.first.shortUrl}"),
-              //         // Text("Section: ${snapshot.data.section}"),
-              //         // Text("Copy Right: ${snapshot.data.copyright}"),
-              //         // Text(
-              //         //   "Num Results : ${snapshot.data.numResults.toString()}",
-              //         // ),
-              //         // Text(
-              //         //   "Last Updated : ${snapshot.data.lastUpdated}",
-              //         // ),
-              //         // Padding(
-              //         //   padding: const EdgeInsets.all(8.0),
-              //         //   child: Text(
-              //         //       "First Results : ${snapshot.data.results.first.toString()}"),
-              //         // ),
-              //       ],
-              //     ),
-              //   );
-              // }
-              else if (snapshot.hasError) {
+              } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
 
@@ -95,4 +73,31 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+}
+
+Widget _buildItem(Results results) {
+  return Column(
+    children: [
+      ExpansionTile(
+        title: Padding(
+          padding: EdgeInsets.all(3),
+          child: Text("""${results.title.toString()}"""),
+        ),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(results.byline.toString()),
+              IconButton(
+                icon: Icon(Icons.launch),
+                onPressed: () {
+                  launch(results.url);
+                },
+              ),
+            ],
+          )
+        ],
+      ),
+    ],
+  );
 }
